@@ -6,21 +6,19 @@
  * Date: 1/28/19
  * Time: 8:30 PM
  */
-require_once "dmap.php";
+define('ROOT', str_replace("index.php", "", $_SERVER["SCRIPT_FILENAME"]));
+session_name("vps_manager");
+session_start([
+	'cookie_lifetime' => 300,
+]);
+require (ROOT.'request.php');
+require (ROOT.'dispatcher.php');
+require (ROOT.'router.php');
+require_once "Controllers/Controller.php";
 
-$dmap = new dmap();
-if ($_SERVER['REQUEST_METHOD'] == "GET"){
-    if(isset($_GET['path'])){
-	    header('location:filemanager.php?path='.$_GET['path']);
-    }elseif (isset($_GET['file'])){
-	    header('location:editor.php?file='.$_GET['file']);
-    }else{
-	    echo "Home";
-    }
+$dispatch = new Dispatcher();
+$dispatch->dispatch();
 
-}elseif ($_SERVER['REQUEST_METHOD']=="POST"){
-    var_dump($_POST);
-}
 ?>
 
 

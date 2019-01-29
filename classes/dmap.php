@@ -24,19 +24,21 @@ class dmap
 
 	public function change_dir($dir)
 	{
-		$this->cur_dir = $this->home . "/" . $dir;
+		$this->cur_dir = $this->home . $dir;
+		//echo $this->cur_dir;
 		$this->process_dir($dir);
 
 	}
 
 	public function home_dir()
 	{
-		$list = array_diff(scandir($this->home), array('..', '.'));
+		$list = array_diff(scandir($this->home, SCANDIR_SORT_ASCENDING ), array('..', '.'));
 		$all_dir = [];
 		foreach ($list as $k => $v) {
 			$all_dir[] = [
 				'path' => isset($dir) ? $dir . "/" . $v : $v,
-				'name' => $v
+				'name' => $v,
+
 			];
 		}
 
@@ -66,21 +68,24 @@ class dmap
 			$all_dir[] = [
 				'path' => $back,
 				'name' => "Back",
-				'type' => "action"
+				'type' => "action",
+				'size'=>".."
 			];
 		}
 
 
-		if ($this->cur_dir == $this->home . "/" . "..") {
-			$list = array_diff(scandir($this->home), array('..', '.'));
-		} else {
-			$list = array_diff(scandir($this->cur_dir), array('..', '.'));
-		}
+
+			$list = array_diff(scandir($this->cur_dir, SCANDIR_SORT_ASCENDING ), array('..', '.'));
+
+
+		/*echo $this->cur_dir;
+		die();*/
 
 		foreach ($list as $k => $v) {
 			$cur_file = $this->cur_dir . "/" . $v;
+
 			$all_dir[] = [
-				'path' => isset($dir) ? $dir . "/" . $v : $v,
+				'path' => is_file($cur_file) ? $this->home.$dir."/".$v :  $dir."/".$v ,
 				'name' => $v,
 				'size' => is_file($cur_file) ? $this->formatSizeUnits(filesize($cur_file)) : "..",
 				'type' => is_file($cur_file) ? "File" : "Folder"
